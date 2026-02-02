@@ -5,19 +5,18 @@ import pandas as pd
 df = pd.read_csv('naive_bayes_excel.csv', delimiter=',')
 
 #Create new cols
-df['highabsence'] = np.where(df['absences']  >= 10, 1, 0)
 df['grade_A'] = np.where(df['G3'] * 5 >= 80, 1, 0)
+df['highabsence'] = np.where(df['absences']  >= 10, 1, 0)
 df['count'] = 1
 
-#Keeping only reqd cols
-df = df[['count','grade_A','highabsence']]
-print("Processed Data")
+# keep only reqd cols
+df = df[['highabsence','grade_A','count']]
+
+print("Processed Data:")
 print(df)
 
-#Create Pivot Table
-
-pt = pd.pivot_table(
-    df,
+pt=pd.pivot_table(
+      df,
     values='count',
     index='grade_A',
     columns='highabsence',
@@ -31,15 +30,8 @@ print(pt)
 P_A = (pt.loc[1,0] + pt.loc[1,1]) / pt.values.sum()
 P_B = (pt.loc[0,1] + pt.loc[1,1]) / pt.values.sum()
 
-P_B_given_A = pt.loc[1,1] / ( pt.loc[1,0] + pt.loc[1,1])
+P_B_given_A = (pt.loc[1,1]) /  (pt.loc[1,0] + pt.loc[1,1])
 
-P_A_given_B = (P_B_given_A * P_A) / P_B
-
-
-# Likelihood P(B|A)
-P_B_given_A = pt.loc[1, 1] / (pt.loc[1, 0] + pt.loc[1, 1])
-
-# Posterior Probability using Bayes Theorem
 P_A_given_B = (P_B_given_A * P_A) / P_B
 
 print("\nProbabilities:")

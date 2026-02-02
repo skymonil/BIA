@@ -22,27 +22,29 @@ pt = pd.pivot_table(
     values='count',
     index='grade_A',
     columns='highabsences',
-    aggfunc='count',
+    aggfunc='sum',
     fill_value=0
 )
 
 print("\nPivot Table:")
 print(pt)
 
+total = pt.values.sum()
+
 # Prior Probability P(A) where A = grade_A = 1
-P_A = (pt.loc[1,0] + pt.loc[1,1]) / pt.values.sum()
+P_A = pt.loc[1].sum() / total
 
 # Prior Probability P(B) where B = highabsences = 1
-P_B = (pt.loc[0, 1] + pt.loc[1, 1]) / pt.values.sum()
+P_B = pt[1].sum() / total
 
 # Likelihood P(B|A)
-P_B_given_A = pt.loc[1, 1] / (pt.loc[1, 0] + pt.loc[1, 1])
+P_B_given_A = pt.loc[1, 1] / pt.loc[1].sum()
 
 # Posterior Probability using Bayes Theorem
 P_A_given_B = (P_B_given_A * P_A) / P_B
 
 print("\nProbabilities:")
-print("P(A) =", P_A)
-print("P(B) =", P_B)
-print("P(B|A) =", P_B_given_A)
-print("P(A|B) =", P_A_given_B)
+print(f"P(Grade A): {P_A:.2%}")
+print(f"P(High Absence): {P_B:.2%}")
+print(f"P(High Absence | Grade A): {P_B_given_A:.2%}")
+print(f"P(Grade A | High Absence): {P_A_given_B:.2%}")
