@@ -23,7 +23,7 @@ X = df_sal[['YearsExperience']]
 Y = df_sal[['Salary']]
 
 # 5. Split data into training & testing
-X_train, X_test, Y_train, Y_test = train_test_split(X,Y, test_size=0.2)
+X_train, X_test, Y_train, Y_test = train_test_split(X,Y, test_size=0.2, random_state=42)
 
 # 6: Create regression model
 #👉 Creates linear regression line
@@ -35,7 +35,7 @@ regressor.fit(X_train, Y_train)
 # 7. Predict Salary
 # Predicts salary values using regression line
 Y_pred_train = regressor.predict(X_train)
-Y_pred_train = regressor.predict(X_train)
+Y_pred_test = regressor.predict(X_test)
 
 #8 . Plot Training Result
 # Dots = real salaries

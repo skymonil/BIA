@@ -1,45 +1,34 @@
 import pandas as pd
-import numpy as np
 import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
 
 # Load dataset
 data = pd.read_csv("clustering-data.csv")
 
-X = data[['ApplicantIncome', 'LoanAmount']].values
+# keep reqd cols
+X = data[['ApplicantIncome', 'LoanAmount']]
 
-k = 3
 
-# Random initial centroids
-centroids = X[np.random.choice(len(X), k, replace=False)]
 
-while True:
-    # Step 1: Calculate distances
-    distances = np.sqrt(((X - centroids[:, np.newaxis])**2).sum(axis=2))
+# Apply K-Means
+kmeans = KMeans(n_clusters=3, random_state=0)
+clusters = kmeans.fit_predict(X)
 
-    # Step 2: Assign clusters
-    clusters = np.argmin(distances, axis=0)
-
-    # Step 3: New centroids
-    new_centroids = np.array([X[clusters == i].mean(axis=0) for i in range(k)])
-
-    # Stop if centroids don’t change
-    if np.allclose(centroids, new_centroids):
-        break
-
-    centroids = new_centroids
+# Get centroids
+centroids = kmeans.cluster_centers_
 
 # Plot clusters
 colors = ['blue', 'green', 'cyan']
 
-for i in range(k):
+for i in range(3):
     plt.scatter(
-        X[clusters == i][:,0],
-        X[clusters == i][:,1],
-        color=colors[i]
+        X[clusters == i]['ApplicantIncome'],
+        X[clusters == i]['LoanAmount'],
+        color=colors[i],
     )
 
 plt.scatter(centroids[:,0], centroids[:,1], color='red', s=150)
 plt.xlabel("Applicant Income")
 plt.ylabel("Loan Amount")
-plt.title("K-Means Clustering")
+plt.title("K-Means Clustering (sklearn)")
 plt.show()
